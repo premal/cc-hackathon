@@ -42,14 +42,12 @@ object CompanyRepository {
     val companyData = companies.get(company).getOrElse(Map())
     val acquisitionsData = acquisitions.get(company).getOrElse(Map())
     val roundsData = rounds.get(company).getOrElse(Map())
-    Seq(company,cleanDomain(companyData.get("homepage_url").getOrElse("***NOT FOUND***")),roundsData.get("company_category_code").getOrElse("***UNKNOWN***"))
+    Seq(
+      company,
+      cleanDomain(companyData.getOrElse("homepage_url","***NOT FOUND***")),
+      roundsData.getOrElse("company_category_code","***UNKNOWN***"),
+      companyData.getOrElse("country_code","***UNKNOWN***"),
+      companyData.getOrElse("city","***UNKNOWN***")
+    )
   }
 }
-
-case class Company(
-name:String,
-domain:String,
-funds:Seq[VC]
-)
-
-case class VC(name:String, amount:BigDecimal)
