@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class ExtractScriptTags {
-    private static final Logger LOG = LoggerFactory.getLogger(ExtractScriptTags.class);
+public class ScriptTags {
+    private static final Logger LOG = LoggerFactory.getLogger(ScriptTags.class);
 
-    protected static class ExtractScriptTagsMapper extends Mapper<Text, ArchiveReader, Text,
+    protected static class ScriptTagsMapper extends Mapper<Text, ArchiveReader, Text,
                 LongWritable> {
 
         private Text outKey = new Text();
