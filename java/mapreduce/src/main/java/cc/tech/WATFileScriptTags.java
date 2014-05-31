@@ -4,6 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -19,6 +20,8 @@ import org.commoncrawl.warc.WARCFileInputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
+
 public class WATFileScriptTags extends Configured implements Tool {
     private static final Logger LOG = LoggerFactory.getLogger(WATFileScriptTags.class);
 
@@ -33,6 +36,9 @@ public class WATFileScriptTags extends Configured implements Tool {
 
         @Parameter(description = "output", names = "-output")
         public String output;
+
+        @Parameter(description = "crunchbase file", names="-cb")
+        public String crunchbaseFile;
     }
 
 
@@ -58,6 +64,8 @@ public class WATFileScriptTags extends Configured implements Tool {
         }
 
         FileOutputFormat.setOutputPath(job, new Path(outputPath));
+
+        DistributedCache.addCacheFile(new URI(params.crunchbaseFile), job.getConfiguration());
 
         job.setInputFormatClass(WARCFileInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);

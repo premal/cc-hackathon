@@ -18,7 +18,7 @@ public class HtmlMetadataUtils {
         pageURI = canonicalizeURL(pageURI);
 
         URL url = new URL(pageURI);
-        return url.getHost();
+        return url.getHost().replace("www.", "");
     }
 
     public static List<String> getURLDomainFromScriptTags(JSONObject jsonObject) throws MalformedURLException {
@@ -47,7 +47,7 @@ public class HtmlMetadataUtils {
 
             URL url = new URL(scriptURL);
             if (!domains.contains(url.getHost())) {
-                domains.add(url.getHost());
+                domains.add(url.getHost().replace("www.", ""));
             }
         }
 
@@ -64,6 +64,9 @@ public class HtmlMetadataUtils {
     }
 
     private static String canonicalizeURL(String url) {
+        //remove spaces
+        url = url.replace(" ", "");
+
         if (url.startsWith("http://") || url.startsWith("https://")) {
             return url;
         } else {
