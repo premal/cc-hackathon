@@ -40,11 +40,11 @@ object MainController extends Controller {
         .companyTechnologies
         .map(e => e._1 -> e._2.intersect(technologies).length).toSeq
         .filter(e => CompanyRepository.domainsToCompany.get(e._1).isDefined)
-        .sortBy(_._2)
+        .sortBy(-_._2)
         .map(e => Json.obj(
           "company" -> Json.toJson(CompanyRepository.domainsToCompany(e._1)),
           "link" -> Json.toJson(e._2)
-        ))
+        )).take(10)
     })
     println(neighbors)
     Ok(Json.toJson(neighbors))

@@ -1,10 +1,6 @@
 @(company:String)
 @main("CC-Hackathon") {
-
-    <div class="row">
         <div id="#graph"></div>
-    </div>
-
     <script>
         $(document).ready(function(){
           var fill = d3.scale.category20();
@@ -14,23 +10,29 @@
                 company:"@company"
             }
           }).then(function(result){
-              d3.layout.cloud().size([300, 300])
+              var max =0;
+              result.forEach(function(d) {
+                max = Math.max(max,d.link);
+              });
+              var scale = 80 / max;
+              console.log(max);
+              d3.layout.cloud().size([900, 900])
                   .words(result.map(function(d) {
                     return {text: d.company, size: d.link};
                   }))
                   .padding(5)
                   .rotate(function() { return ~~(Math.random() * 2) * 90; })
                   .font("Impact")
-                  .fontSize(function(d) { return d.size; })
+                  .fontSize(function(d) { return d.size * scale; })
                   .on("end", draw)
                   .start();
 
               function draw(words) {
                 d3.select("body").append("svg")
-                    .attr("width", 300)
-                    .attr("height", 300)
+                    .attr("width", 900)
+                    .attr("height", 900)
                   .append("g")
-                    .attr("transform", "translate(150,150)")
+                    .attr("transform", "translate(450,450)")
                   .selectAll("text")
                     .data(words)
                   .enter().append("text")
