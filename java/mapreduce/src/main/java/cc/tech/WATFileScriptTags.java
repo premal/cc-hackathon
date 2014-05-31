@@ -11,6 +11,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.lib.reduce.LongSumReducer;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.commoncrawl.warc.WARCFileInputFormat;
@@ -61,8 +62,13 @@ public class WATFileScriptTags extends Configured implements Tool {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(LongWritable.class);
 
+        job.setMapperClass(ScriptTags.ScriptTagsMapper.class);
+        job.setReducerClass(LongSumReducer.class);
 
-
-        return 0;
+        if (job.waitForCompletion(true)) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 }
