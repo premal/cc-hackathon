@@ -12,6 +12,7 @@ import models.CompanyRepository
 object Global extends GlobalSettings {
 
   override def onStart(app: Application) {
+    Logger.info("starting CC-Hackathon")
     CompanyRepository.init
   }
 
