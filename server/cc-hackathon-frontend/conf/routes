@@ -3,7 +3,10 @@
 # ~~~~
 
 GET         /                      controllers.MainController.index
-GET         /companies             controllers.MainController.companies
+GET         /companies/csv         controllers.MainController.companiesCSV
+GET         /companies/json        controllers.MainController.companiesJson
+
+# GET         /company/:name          controllers.MainController.getCompany(name)
 
 # Webjars, requirejs, routes and other assets
 GET         /lib/require.js        controllers.WebJarAssets.requirejs

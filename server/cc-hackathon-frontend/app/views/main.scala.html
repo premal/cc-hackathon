@@ -5,11 +5,12 @@
 <head>
     <title>@title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='stylesheet' media="screen" href='@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap.css"))'>
-    <link rel='stylesheet' media="screen" href='@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap-theme.css"))'>
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    <link rel='stylesheet' media="screen" href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css'>
+    <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2-bootstrap.css">
+    <link rel="stylesheet" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.css">
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-    <script data-main="@routes.Assets.at("javascripts/app.js")" type='text/javascript' src='@routes.WebJarAssets.requirejs'></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-inverse" role="navigation">
@@ -29,5 +30,7 @@
     <div class="container">
         @content
     </div>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/3.4.8/select2.min.js"></script>
 </body>
 </html>

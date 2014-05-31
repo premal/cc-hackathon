@@ -6,6 +6,7 @@ import java.net.URI
 import java.io.File
 import play.api.Logger
 import scala.util.{Failure, Success, Try}
+import play.api.libs.json.Json
 
 object MainController extends Controller {
 
@@ -29,27 +30,40 @@ object MainController extends Controller {
     Seq(company,cleanDomain(companyData.get("homepage_url").getOrElse("***NOT FOUND***")),roundsData.get("company_category_code").getOrElse("***UNKNOWN***"))
   }
 
-  def companies = Action { implicit request => {
-    val companiesData = Source.fromFile(new File("../../data/crunchbase_companies.csv"))("UTF-8").getLines().map(_.split(";").map(_.trim))
-    val acquisitionsData = Source.fromFile(new File("../../data/crunchbase_acquisitions.csv"))("UTF-8").getLines().map(_.split(";").map(_.trim))
-    val roundsData = Source.fromFile(new File("../../data/crunchbase_rounds.csv"))("UTF-8").getLines().map(_.split(";").map(_.trim))
-
+  def companiesCSV = Action { implicit request => {
     val builder = new StringBuilder
     val header = Seq("name","domain","category")
     builder.append(header.reduce(_ + ";" + _))
     builder.append("\n")
-    for(
+    companies.foreach(entry => builder.append(entry.reduceLeft(_ + ";" + _)).append("\n"))
+
+    Ok(builder.toString())
+  }}
+
+  def companiesJson = Action { implicit request => {
+    Ok(Json.toJson(companies.map(e => Json.obj(
+      "name" -> e(0),
+      "domain" -> e(1),
+      "category" -> e(2)
+    ))))
+  }}
+
+  private def companies:Seq[Seq[String]] = {
+    val companiesData = Source.fromFile(new File("../../data/crunchbase_companies.csv"))("UTF-8").getLines().map(_.split(";").map(_.trim))
+    val acquisitionsData = Source.fromFile(new File("../../data/crunchbase_acquisitions.csv"))("UTF-8").getLines().map(_.split(";").map(_.trim))
+    val roundsData = Source.fromFile(new File("../../data/crunchbase_rounds.csv"))("UTF-8").getLines().map(_.split(";").map(_.trim))
+
+    val result = (for(
       companyHeader <- companiesData.take(1);
       acquisitionHeader <- acquisitionsData.take(1);
       roundHeader <- roundsData.take(1)
-    ){
+    ) yield {
       val companies = companiesData.map(toEntry(companyHeader,_)).map(m => m("name") -> m).toMap
       val acquisitions = acquisitionsData.map(toEntry(acquisitionHeader,_)).map(m => m.get("company_name").map(_ -> m)).filter(_.isDefined).map(_.get).toMap
       val rounds = roundsData.map(toEntry(roundHeader,_)).map(m => m("company_name") -> m).toMap
 
-      companies.keys.map(createCompanyElement(companies,acquisitions,rounds,_)).foreach(entry => builder.append(entry.reduceLeft(_ + ";" + _)).append("\n"))
-    }
-
-    Ok(builder.toString())
-  }}
+      companies.keys.map(createCompanyElement(companies,acquisitions,rounds,_))
+    })
+    result.next().toSeq
+  }
 }
