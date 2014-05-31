@@ -1,5 +1,6 @@
 package cc.tech;
 
+import cc.tech.utils.HtmlMetadataUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ScriptTags {
     private static final Logger LOG = LoggerFactory.getLogger(ScriptTags.class);
@@ -38,15 +40,21 @@ public class ScriptTags {
                     String content = new String(rawData);
                     JSONObject json = new JSONObject(content);
 
-                    String server = json.getJSONObject("Envelope").getJSONObject("Payload-Metadata").getJSONObject("HTTP-Response-Metadata").getJSONObject("Headers").getString("Server");
-                    outKey.set(server);
-                    context.write(outKey, outVal);
+                    String pageDomain = HtmlMetadataUtils.getPageDomain(json);
 
+                    List<String> domains = HtmlMetadataUtils.getURLDomainFromScriptTags(json,
+                            "text/javascript");
+                    for (String domain : domains) {
+                        outKey.set(String.format("%s\t%s", pageDomain, domain));
+                        context.write(outKey, outVal);
+                    }
                 } catch (Exception ex) {
                     LOG.error("caught exception", ex);
                     context.getCounter("MAP", "EXCEPTIONS").increment(1);
                 }
             }
         }
+
+
     }
 }

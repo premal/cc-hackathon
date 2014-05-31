@@ -1,9 +1,8 @@
 package controllers
 
 import play.api.mvc._
-import scala.io.Source
-import java.net.URI
-import java.io.File
+import play.api.libs.json.Json
+import models.CompanyRepository
 
 object MainController extends Controller {
 
@@ -14,13 +13,23 @@ object MainController extends Controller {
     Ok(views.html.index())
   }
 
-  def cleanCSV = Action(parse.multipartFormData) {implicit request =>
-    val f = request.body.file("file").get
-    val tmpFile = File.createTempFile("crunchbase","csv")
+  def companiesCSV = Action { implicit request => {
+    val builder = new StringBuilder
+    val header = Seq("name","domain","category","country","city")
+    builder.append(header.reduce(_ + ";" + _))
+    builder.append("\n")
+    CompanyRepository.companies.foreach(entry => builder.append(entry.reduceLeft(_ + ";" + _)).append("\n"))
 
-    f.ref.moveTo(tmpFile,true)
-    val result = Source.fromFile(tmpFile).getLines().filter(!_.isEmpty).map(uri => new URI(uri)).filter(uri => Option(uri.getHost).isDefined).map(_.getHost.replace("www.","").toLowerCase + "\n").foldLeft(new StringBuilder())((builder,s) => builder.append(s)).toString()
+    Ok(builder.toString())
+  }}
 
-    Ok(result)
-  }
+  def companiesJson = Action { implicit request => {
+    Ok(Json.toJson(CompanyRepository.companies.map(e => Json.obj(
+      "name" -> e(0),
+      "domain" -> e(1),
+      "category" -> e(2),
+      "country" -> e(3),
+      "city" -> e(4)
+    ))))
+  }}
 }
