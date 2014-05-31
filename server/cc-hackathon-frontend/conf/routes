@@ -3,6 +3,7 @@
 # ~~~~
 
 GET         /                      controllers.MainController.index
+GET         /companies             controllers.MainController.companies
 
 # Webjars, requirejs, routes and other assets
 GET         /lib/require.js        controllers.WebJarAssets.requirejs
