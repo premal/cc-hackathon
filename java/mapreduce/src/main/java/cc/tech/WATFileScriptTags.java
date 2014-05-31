@@ -9,6 +9,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.mapreduce.lib.reduce.LongSumReducer;
@@ -38,7 +39,7 @@ public class WATFileScriptTags extends Configured implements Tool {
     @Override
     public int run(String[] args) throws Exception {
         WATFileScriptTagsParams params = new WATFileScriptTagsParams();
-        new JCommander(params);
+        new JCommander(params, args);
 
         Configuration conf = getConf();
 
@@ -47,6 +48,8 @@ public class WATFileScriptTags extends Configured implements Tool {
 
         String inputPath = params.input;
         LOG.info("inputPath : {}", inputPath);
+
+        FileInputFormat.addInputPath(job, new Path(inputPath));
 
         String outputPath = params.output;
         FileSystem fs = FileSystem.get(conf);
