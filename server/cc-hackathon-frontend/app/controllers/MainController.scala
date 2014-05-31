@@ -46,7 +46,6 @@ object MainController extends Controller {
           "link" -> Json.toJson(e._2)
         )).take(10)
     })
-    println(neighbors)
     Ok(Json.toJson(neighbors))
   }}
 }
