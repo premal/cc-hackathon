@@ -5,6 +5,7 @@ import scala.io.Source
 import java.net.URI
 import java.io.File
 import play.api.Logger
+import scala.util.{Failure, Success, Try}
 
 object MainController extends Controller {
 
@@ -16,9 +17,10 @@ object MainController extends Controller {
   }
 
 
-  private def toEntry(header:Array[String], entry:Array[String]) : Map[String,String] = entry.zipWithIndex.map(e => header(e._2) ->  e._1).toMap
+  private def toEntry(header:Array[String], entry:Array[String]) : Map[String,String] =0 until Math.min(header.length,entry.length) map (i => header(i) -> entry(i)) toMap
 
-  private def cleanDomain(url:String) = (new URI(url)).getHost.replace("www.","")
+
+  private def cleanDomain(url:String) = Option((new URI(url)).getHost).map(_.replace("www.","")).getOrElse("")
 
   private def createCompanyElement(companies:Map[String,Map[String,String]],acquisitions:Map[String,Map[String,String]],rounds:Map[String,Map[String,String]],company:String): Seq[String] = {
     val companyData = companies.get(company).getOrElse(Map())
@@ -28,25 +30,24 @@ object MainController extends Controller {
   }
 
   def companies = Action { implicit request => {
-    val companiesData = Source.fromFile(new File("../../data/crunchbase_companies.csv")).getLines().map(_.split(";").map(_.trim))
-    val acquisitionsData = Source.fromFile(new File("../../data/crunchbase_acquisitions.csv")).getLines().map(_.split(";").map(_.trim))
-    val roundsData = Source.fromFile(new File("../../data/crunchbase_rounds.csv")).getLines().map(_.split(";").map(_.trim))
+    val companiesData = Source.fromFile(new File("../../data/crunchbase_companies.csv"))("UTF-8").getLines().map(_.split(";").map(_.trim))
+    val acquisitionsData = Source.fromFile(new File("../../data/crunchbase_acquisitions.csv"))("UTF-8").getLines().map(_.split(";").map(_.trim))
+    val roundsData = Source.fromFile(new File("../../data/crunchbase_rounds.csv"))("UTF-8").getLines().map(_.split(";").map(_.trim))
 
     val builder = new StringBuilder
-
+    val header = Seq("name","domain","category")
+    builder.append(header.reduce(_ + ";" + _))
+    builder.append("\n")
     for(
       companyHeader <- companiesData.take(1);
       acquisitionHeader <- acquisitionsData.take(1);
       roundHeader <- roundsData.take(1)
     ){
-      val companies = companiesData.map(toEntry(companyHeader,_)).map(m => {
-        println(m("name"))
-        m("name") -> m
-      }).toMap
-      val acquisitions = acquisitionsData.map(toEntry(acquisitionHeader,_)).map(m => m("company_name") -> m).toMap
+      val companies = companiesData.map(toEntry(companyHeader,_)).map(m => m("name") -> m).toMap
+      val acquisitions = acquisitionsData.map(toEntry(acquisitionHeader,_)).map(m => m.get("company_name").map(_ -> m)).filter(_.isDefined).map(_.get).toMap
       val rounds = roundsData.map(toEntry(roundHeader,_)).map(m => m("company_name") -> m).toMap
 
-      companies.keys.map(createCompanyElement(companies,acquisitions,rounds,_)).foreach(entry => builder.append(entry.reduceLeftOption(_ + ";" + _)))
+      companies.keys.map(createCompanyElement(companies,acquisitions,rounds,_)).foreach(entry => builder.append(entry.reduceLeft(_ + ";" + _)).append("\n"))
     }
 
     Ok(builder.toString())
