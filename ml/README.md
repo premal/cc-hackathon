@@ -14,7 +14,7 @@ To Compute Similarities
 
 we want to emit
 
-company_A, company_B, # of common technologies, similarity score = # common technologies / total # technologies
+company_A, company_B, list of common technologies, # of common technologies, similarity score = # common technologies / total # technologies
 
 This way we get a score and a raw measure (# common technologies) of how similar they are, too.
 
