@@ -1,0 +1,12 @@
+.idea
+*.iml
+target/
+*/.idea
+*.jar
+*.class
+*.py[c|o]
+*~
+*.swp
+*.coffee~
+*.js~
+.DS_Store
