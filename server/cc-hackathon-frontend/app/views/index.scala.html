@@ -1,10 +1,8 @@
 @main("CC-Hackathon") {
 
-    <div class="row">
-        <div class="col-md-4">
-            <input type="text" id="search">
-
-        </div>
+    <div class="cc-searchbar">
+        <h3>Select a company to see others with similar technologies</h3>
+        <input type="text" id="search">
     </div>
 
     <script>
@@ -20,27 +18,41 @@
                 });
             }).then(function(){
                 $("#search").select2({
-                    placeholder: "Search for a company or a technology",
-                    minimumInputLength: 1,
+                    placeholder: "Search for a company",
+                    minimumInputLength: 0,
                     data: crunchbase,
                     initSelection: function(element, callback) {
-                        // the input tag has a value attribute preloaded that points to a preselected movie's id
-                        // this function resolves that id attribute to an object that select2 can render
-                        // using its formatResult renderer - that way the movie name is shown preselected
-                        var id=$(element).val();
-                        if (id!=="") {
-                            $.ajax("http://api.rottentomatoes.com/api/public/v1.0/movies/"+id+".json", {
-                                data: {
-                                    apikey: "ju6z9mjyajq2djue3gbvv26t"
-                                },
-                                dataType: "jsonp"
-                            }).done(function(data) { callback(data); });
-                        }
+                        val = $(element).select2('val')
+                        callback({ id: val, text: val })
                     },
-                    //formatResult: movieFormatResult, // omitted for brevity, see the source of this page
-                    //formatSelection: movieFormatSelection,  // omitted for brevity, see the source of this page
-                    dropdownCssClass: "bigdrop", // apply css that makes the dropdown taller
+                    query: function (query) {
+                        pageSize = 20;
+                        items = []
+                        more = false;
+                        start = (query.page - 1) * pageSize
+                        for (var i = 0; i < crunchbase.length; i++) {
+                            if (query.matcher(query.term, crunchbase[i].text)) {
+                                if (start > 0) {
+                                    start--;
+                                    continue;
+                                }
+                                if (items.length >= pageSize) {
+                                    more = true;
+                                    break;
+                                }
+                                items.push(crunchbase[i]);
+                            }
+                        }
+                        query.callback({
+                            more: more,
+                            results: items
+                        });
+                    },
                     escapeMarkup: function (m) { return m; } // we do not want to escape markup since we are displaying html in results
+                });
+                $("#search").on("change", function(e) {
+                    company = encodeURIComponent(e.val);
+                    window.location.href = 'company/' + company;
                 });
             });
         });

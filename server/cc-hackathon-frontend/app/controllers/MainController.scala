@@ -33,10 +33,19 @@ object MainController extends Controller {
 
   def kmeans = Action{implicit request => {
     val company = request.body.asFormUrlEncoded.get("company").head
-    val neighbors = CompanyRepository.companyTechnologies.get(company).map(technologies => {
-      CompanyRepository.companyTechnologies.map(e => e._1 -> e._2.intersect(technologies).length).toSeq.sortBy(-_._2).map(_._1).take(20)
+    println(CompanyRepository.companies.keys.toList)
+    val neighbors = CompanyRepository.companies.get(company).map(company => {
+      val technologies = CompanyRepository.companyTechnologies.getOrElse(company("domain"),Seq())
+      CompanyRepository
+        .companyTechnologies
+        .map(e => e._1 -> e._2.intersect(technologies).length).toSeq
+        .filter(e => CompanyRepository.domainsToCompany.get(e._1).isDefined)
+        .sortBy(-_._2)
+        .map(e => Json.obj(
+          "company" -> Json.toJson(CompanyRepository.domainsToCompany(e._1)),
+          "link" -> Json.toJson(e._2)
+        )).take(10)
     })
-    println(neighbors)
     Ok(Json.toJson(neighbors))
   }}
 }
