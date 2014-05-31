@@ -3,6 +3,9 @@ package cc.tech;
 import cc.tech.utils.HtmlMetadataUtils;
 import com.beust.jcommander.internal.Sets;
 import com.google.common.base.Charsets;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.filecache.DistributedCache;
@@ -20,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
@@ -34,6 +38,8 @@ public class ScriptTags {
 
         private Set<String> crunchbaseDomains = Sets.newHashSet();
 
+        private Splitter tsvSplitter = Splitter.on("\t").omitEmptyStrings();
+
         @Override
         protected void setup(Context context) throws IOException, InterruptedException {
             super.setup(context);
@@ -43,8 +49,30 @@ public class ScriptTags {
             BufferedReader br = Files.newReader(crunchbaseFile, Charsets.UTF_8);
             String line;
             while ((line = br.readLine()) != null) {
-                if (!crunchbaseDomains.contains(line)) {
-                    crunchbaseDomains.add(line);
+                List<String> splitLine = Lists.newArrayList(Iterables.toArray(tsvSplitter.split
+                        (line), String.class));
+
+                if (splitLine.size() == 0) {
+                    continue;
+                }
+
+                //hack hack: we have 2 types of input file... 1 is single column and 2nd is not
+                //in multi column we take column 2 as our domain
+                String domain = "";
+                if (splitLine.size() > 1) {
+                    domain = splitLine.get(1);
+                } else {
+                    domain = splitLine.get(0);
+                }
+
+                domain = HtmlMetadataUtils.canonicalizeURL(domain).replace("www.", "");
+
+                URL url = new URL(domain);
+
+                LOG.info("domain : {}", url.getHost());
+
+                if (!crunchbaseDomains.contains(url.getHost())) {
+                    crunchbaseDomains.add(url.getHost());
                 }
             }
 

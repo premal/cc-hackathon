@@ -63,7 +63,7 @@ public class HtmlMetadataUtils {
                 .getJSONArray("Scripts");
     }
 
-    private static String canonicalizeURL(String url) {
+    public static String canonicalizeURL(String url) {
         //remove spaces
         url = url.replace(" ", "");
 
