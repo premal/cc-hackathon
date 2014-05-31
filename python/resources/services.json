@@ -1712,6 +1712,7 @@
   ]}},
   {"AKQA": {"http://www.akqa.com/": ["akqa.com", "srtk.net"]}},
   {"Amazon.com": {"http://www.amazon.com/": ["amazon.com", "cloudfront.net"]}},
+  {"Alibaba.com": {"http://www.alibaba.com/": ["alibaba.com", "aliexpress.com"]}},
   {"AOL": {"http://www.aol.com/": [
     "5min.com",
     "aim.com",
@@ -1794,7 +1795,7 @@
     "aboutecho.com", "haloscan.com", "js-kit.com"
   ]}},
   {"EventBrite": {"http://www.eventbrite.com/": ["eventbrite.com"]}},  
-  {"Facebook": {"http://www.facebook.com/": ["akamaihd.net", "instagram.com"]}},
+  {"Facebook": {"http://www.facebook.com/": ["akamaihd.net", "instagram.com", "fbcdn.net"]}},
   {"Flattr": {"http://flattr.com/": ["flattr.com"]}},
   {"FreeWheel": {"http://www.freewheel.tv/": ["freewheel.tv", "fwmrm.net"]}},
   {"Get Satisfaction": {"https://getsatisfaction.com/": [
@@ -1808,6 +1809,7 @@
     "formalyzer.com", "gogrid.com", "komli.net"
   ]}},
   {"Google": {"http://www.google.com/": [
+    "google.com",
     "apture.com",
     "blogger.com",
     "disconnect.me",
