@@ -6,7 +6,10 @@ GET         /                      controllers.MainController.index
 GET         /companies/csv         controllers.MainController.companiesCSV
 GET         /companies/json        controllers.MainController.companiesJson
 
-# GET         /company/:name          controllers.MainController.getCompany(name)
+POST        /company               controllers.MainController.kmeans
+GET         /company/:company      controllers.MainController.kmeansPage(company)
+
+# GET       /company/:name          controllers.MainController.getCompany(name)
 
 # Webjars, requirejs, routes and other assets
 GET         /lib/require.js        controllers.WebJarAssets.requirejs

@@ -18,18 +18,25 @@ object MainController extends Controller {
     val header = Seq("name","domain","category","country","city")
     builder.append(header.reduce(_ + ";" + _))
     builder.append("\n")
-    CompanyRepository.companies.foreach(entry => builder.append(entry.reduceLeft(_ + ";" + _)).append("\n"))
+    CompanyRepository.companies.foreach(entry => builder.append(header.map(entry._2(_)).reduceLeft(_ + ";" + _)).append("\n"))
 
     Ok(builder.toString())
   }}
 
   def companiesJson = Action { implicit request => {
-    Ok(Json.toJson(CompanyRepository.companies.map(e => Json.obj(
-      "name" -> e(0),
-      "domain" -> e(1),
-      "category" -> e(2),
-      "country" -> e(3),
-      "city" -> e(4)
-    ))))
+    Ok(Json.toJson(CompanyRepository.companies.map(e => Json.toJson(e._2))))
+  }}
+
+  def kmeansPage(company:String) = Action(implicit request => {
+    Ok(views.html.kmeans(company))
+  })
+
+  def kmeans = Action{implicit request => {
+    val company = request.body.asFormUrlEncoded.get("company").head
+    val neighbors = CompanyRepository.companyTechnologies.get(company).map(technologies => {
+      CompanyRepository.companyTechnologies.map(e => e._1 -> e._2.intersect(technologies).length).toSeq.sortBy(-_._2).map(_._1).take(20)
+    })
+    println(neighbors)
+    Ok(Json.toJson(neighbors))
   }}
 }
