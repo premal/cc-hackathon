@@ -637,6 +637,7 @@
   {"Glam Media": {"http://www.glammedia.com/": ["glam.com", "glammedia.com"]}},
   {"Globe7": {"http://www.globe7.com/": ["globe7.com"]}},
   {"GoDataFeed": {"http://godatafeed.com/": ["godatafeed.com"]}},
+  {"Google": {"http://www.google.com/": ["googleadservices.com", "googlesyndication.com"]}},
   {"GoldSpot Media": {"http://www.goldspotmedia.com/": ["goldspotmedia.com"]}},
   {"Grapeshot": {"http://www.grapeshot.co.uk/": ["grapeshot.co.uk"]}},
   {"Grocery Shopping Network": {"http://www.groceryshopping.net/": [
@@ -1552,6 +1553,7 @@
   {"Go Daddy": {"http://www.godaddy.com/": [
     "godaddy.com", "trafficfacts.com"
   ]}},
+  {"Google": {"http://www.google.com": ["google-analytics.com", "googletagservices.com"]}},
   {"GoSquared": {"https://www.gosquared.com/": ["gosquared.com"]}},
   {"GoStats": {"http://gostats.com/": ["gostats.com"]}},
   {"GTop": {"http://www.gtop.ro/": ["gtop.ro", "gtopstats.com"]}},
@@ -1791,6 +1793,7 @@
   {"Echo": {"http://aboutecho.com/": [
     "aboutecho.com", "haloscan.com", "js-kit.com"
   ]}},
+  {"EventBrite": {"http://www.eventbrite.com/": ["eventbrite.com"]}},  
   {"Facebook": {"http://www.facebook.com/": ["akamaihd.net", "instagram.com"]}},
   {"Flattr": {"http://flattr.com/": ["flattr.com"]}},
   {"FreeWheel": {"http://www.freewheel.tv/": ["freewheel.tv", "fwmrm.net"]}},
@@ -2176,6 +2179,7 @@
   {"Wingify": {"http://wingify.com/": [
     "visualwebsiteoptimizer.com", "wingify.com"
   ]}},
+  {"Wordpress": {"http://www.wordpress.com/": ["wp.com", "wordpress.com"]}},
   {"Xtify": {"http://xtify.com/": ["xtify.com"]}},
   {"Yahoo!": {"http://www.yahoo.com/": [
     "flickr.com",
@@ -2229,8 +2233,10 @@
     "xgraph.com",
     "xgraph.net"
   ]}},
+  {"Bit.ly": {"http://bit.ly/": ["bit.ly"]}},
   {"Causes": {"http://www.causes.com/": ["causes.com"]}},
   {"Digg": {"http://digg.com/": ["digg.com"]}},
+  {"Facebook": {"http://www.facebook.com/": ["facebook.com"]}},
   {"LinkedIn": {"http://www.linkedin.com/": ["licdn.com", "linkedin.com"]}},
   {"Lockerz": {"http://lockerz.com/": ["addtoany.com", "lockerz.com"]}},
   {"Mail.Ru": {"http://mail.ru/": ["list.ru", "mail.ru"]}},
@@ -2244,6 +2250,7 @@
   {"StumbleUpon": {"http://www.stumbleupon.com/": [
     "stumble-upon.com", "stumbleupon.com"
   ]}},
+  {"Twitter": {"http://www.twitter.com/": ["twitter.com"]}},
   {"VKontakte": {"http://vk.com/": ["userapi.com", "vk.com", "vkontakte.ru"]}},
   {"Yahoo!": {"http://www.yahoo.com/": [
     "mybloglog.com",

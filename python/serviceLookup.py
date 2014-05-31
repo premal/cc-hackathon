@@ -21,9 +21,9 @@ class ServiceLookup:
               'name': name.encode('utf8'), 
               'url': url.encode('utf8')
             }
-            service['domains'] = map(lambda x: x.encode('utf8'), domains)
+            domains = map(lambda x: x.encode('utf8'), domains)
             
-            for domain in service['domains']:
+            for domain in domains:
               try:
                 self.index.add(domain, service)  
               except Exception, e:
