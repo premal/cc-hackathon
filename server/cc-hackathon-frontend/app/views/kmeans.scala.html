@@ -1,6 +1,10 @@
 @(company:String)
 @main("CC-Hackathon") {
+    <div class="cc-company">
+        <a href="/" class="pull-right">Back</a>
+        <h2>@company</h2>
         <div id="#graph"></div>
+    </div>
     <script>
         $(document).ready(function(){
           var fill = d3.scale.category20();
