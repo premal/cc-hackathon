@@ -36,8 +36,9 @@ object CompanyRepository {
     ) yield {
       technologies.foldLeft(mutable.Map[String,Seq[String]]())((map,entry) => {
         val techs = map.getOrElse(entry(0),Seq())
-        (Json.parse(entry(3)) \ "name").asOpt[String].foreach(tech => map.put(entry(0),techs :+ tech))
-
+        if(entry.length > 3){
+          map.put(entry(0),techs :+ entry(3))
+        }
         map
       })
     }).next().toMap
