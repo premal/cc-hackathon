@@ -21,17 +21,20 @@ class ServiceLookup:
               'name': name.encode('utf8'), 
               'url': url.encode('utf8')
             }
+            string_to_add = '%s\t%s\t%s' % (cat.encode('utf8'), url.encode('utf8'), name.encode('utf8'))
             domains = map(lambda x: x.encode('utf8'), domains)
             
             for domain in domains:
               try:
-                self.index.add(domain, service)  
+                self.index.add(domain, string_to_add)  
               except Exception, e:
                 #print 'Skipping {}'.format(domain)
                 pass
               
   def find(self, input):
-    return self.index.find_short(input)[2] or {}
+    if self.index.find_short(input)[2] is None:
+        return '\t\t\t'.split('\t')
+    return self.index.find_short(input)[2].split('\t') or '\t\t\t'.split('\t')
     
 
 #ask for input
@@ -53,7 +56,9 @@ rows = []
 with open(inputPath, 'rb') as inputFile:
   reader = csv.reader(inputFile, delimiter='\t')
   for row in reader:
-    row.append(lookup.find(row[1]))
+    for s in lookup.find(row[1]):
+      row.append(s)
+    #row.append(lookup.find(row[1]))
     rows.append(row)
 
 with open(outputPath, 'wb') as outputFile:
