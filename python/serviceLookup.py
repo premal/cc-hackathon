@@ -1,4 +1,5 @@
 import csv, json, noaho
+from urlparse import urlparse
 
 class ServiceLookup:
   def __init__(self):
@@ -49,15 +50,30 @@ outputPath = raw_input('Output TSV path (default "{0}"): '.format(default_output
 if len(outputPath) == 0:
   outputPath = default_output
 
+#as for cb
+cbPath = raw_input('CrunchBase TSV path: ')
 
 lookup = ServiceLookup()
 
 rows = []
+
+cb = dict()
+with open(cbPath, 'rb') as cbFile:
+  reader = csv.reader(cbFile, delimiter='\t')
+  for row in reader:
+    cb_domain = urlparse(row[1]).netloc.replace('www.', '')
+    cb[cb_domain] = row
+
 with open(inputPath, 'rb') as inputFile:
   reader = csv.reader(inputFile, delimiter='\t')
   for row in reader:
     for s in lookup.find(row[1]):
       row.append(s)
+
+    if row[0] in cb:
+      for s in cb[row[0]]:
+        row.append(s)
+
     #row.append(lookup.find(row[1]))
     rows.append(row)
 
