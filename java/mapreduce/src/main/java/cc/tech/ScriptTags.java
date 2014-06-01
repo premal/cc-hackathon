@@ -82,43 +82,45 @@ public class ScriptTags {
         @Override
         protected void map(Text key, ArchiveReader archiveReader, Context context)
                 throws IOException, InterruptedException {
-            for (ArchiveRecord archiveRecord : archiveReader) {
-                // Skip any records that are not JSON
-                if (!archiveRecord.getHeader().getMimetype().equals("application/json")) {
-                    continue;
-                }
-
-                try {
-                    context.getCounter("MAP", "COUNTER").increment(1);
-
-                    // Convenience function that reads the full message into a raw byte array
-                    byte[] rawData = IOUtils.toByteArray(archiveRecord, archiveRecord.available());
-                    String content = new String(rawData);
-                    JSONObject json = new JSONObject(content);
-
-                    String pageDomain = HtmlMetadataUtils.getPageDomain(json);
-
-                    //skip domains not in crunchbase
-                    if (!crunchbaseDomains.contains(pageDomain)) {
-                        context.getCounter("MAP", "NOT-CB").increment(1);
+            try {
+                for (ArchiveRecord archiveRecord : archiveReader) {
+                    // Skip any records that are not JSON
+                    if (!archiveRecord.getHeader().getMimetype().equals("application/json")) {
                         continue;
                     }
 
-                    context.getCounter("MAP", "CB").increment(1);
+                    try {
+                        context.getCounter("MAP", "COUNTER").increment(1);
 
-                    List<String> domains = HtmlMetadataUtils.getURLDomainFromScriptTags(json,
-                            "text/javascript");
-                    for (String domain : domains) {
-                        outKey.set(String.format("%s\t%s", pageDomain, domain));
-                        context.write(outKey, outVal);
+                        // Convenience function that reads the full message into a raw byte array
+                        byte[] rawData = IOUtils.toByteArray(archiveRecord, archiveRecord.available());
+                        String content = new String(rawData);
+                        JSONObject json = new JSONObject(content);
+
+                        String pageDomain = HtmlMetadataUtils.getPageDomain(json);
+
+                        //skip domains not in crunchbase
+                        if (!crunchbaseDomains.contains(pageDomain)) {
+                            context.getCounter("MAP", "NOT-CB").increment(1);
+                            continue;
+                        }
+
+                        context.getCounter("MAP", "CB").increment(1);
+
+                        List<String> domains = HtmlMetadataUtils.getURLDomainFromScriptTags(json,
+                                "text/javascript");
+                        for (String domain : domains) {
+                            outKey.set(String.format("%s\t%s", pageDomain, domain));
+                            context.write(outKey, outVal);
+                        }
+                    } catch (Exception ex) {
+                        //LOG.error("caught exception", ex);
+                        context.getCounter("MAP", "EXCEPTIONS").increment(1);
                     }
-                } catch (Exception ex) {
-                    //LOG.error("caught exception", ex);
-                    context.getCounter("MAP", "EXCEPTIONS").increment(1);
                 }
+            } catch (Exception e) {
+                context.getCounter("MAP", "BAILING OUT").increment(1);
             }
         }
-
-
     }
 }

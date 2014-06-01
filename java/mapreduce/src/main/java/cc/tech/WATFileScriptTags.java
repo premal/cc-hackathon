@@ -52,6 +52,8 @@ public class WATFileScriptTags extends Configured implements Tool {
         Job job = new Job(conf);
         job.setJarByClass(WATFileScriptTags.class);
 
+        job.getConfiguration().set("mapred.reduce.tasks", "100");
+
         String inputPath = params.input;
         LOG.info("inputPath : {}", inputPath);
 
